@@ -7,40 +7,28 @@ jobs:
     steps:
       - checkout
       - run: npm i
-      - save cache:
-        key: "npm-packages"
-        paths:
-          - /stc/node_modules
       - run: npm run lint
-      
   test:
-    docker: 
+    docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - restore cache:
-        keys:
-          - "npm-packages"
       - run: npm i
       - run: npm run test
-  
   analyze:
-    docker: 
+    docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - restore cache:
-        - "npm-packages"
       - run: npm audit
-                   
+
 workflows:
   my_workflow:
     jobs:
       - build
       - test:
-        requires:
-          - build
-      - analyzes:
+          requires:
+            - build
+      - analyze:
           requires:
             - test
-
